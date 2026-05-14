@@ -62,7 +62,7 @@ for (const branch of ["main", "homol"]) {
     console.error(`  git checkout devel`);
     console.error(`  git pull origin devel`);
     console.error(`  git branch -D ${currentBranch}`);
-    console.error(`  git checkout -b feat/TAREFA\n`);
+    console.error(`  git checkout -b ${currentBranch}\n`);
     break;
   } catch (_) {}
 }
