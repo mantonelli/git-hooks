@@ -1,0 +1,24 @@
+pre-commit:
+  scripts:
+    "check-branch.js":
+      runner: node
+
+commit-msg:
+  scripts:
+    "check-commit-msg.js":
+      runner: node
+
+pre-push:
+  scripts:
+    "check-push.js":
+      runner: node
+
+post-checkout:
+  scripts:
+    "check-checkout-base.js":
+      runner: node
+
+prepare-commit-msg:
+  scripts:
+    "prepare-msg.js":
+      runner: node
