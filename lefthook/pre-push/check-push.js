@@ -8,6 +8,8 @@ const TASK_PATTERN = /^(feat|fix|chore)\/.+/
 const RELEASE_PATTERN = /^release\/.+/
 const NULL_SHA = '0000000000000000000000000000000000000000'
 
+const red = (s) => `\x1b[31m${s}\x1b[0m`
+
 const currentBranch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim()
 const rl = readline.createInterface({ input: process.stdin })
 let failed = false
@@ -44,14 +46,14 @@ rl.on('line', (line) => {
   const isForcePush = !isFirstPush && !isAncestor(remoteSha, localSha)
 
   if (PROTECTED.includes(remoteBranch) && !PROTECTED.includes(currentBranch)) {
-    console.error(`\n[hook] Não é permitido fazer push para "${remoteBranch}" a partir de "${currentBranch}".`)
+    console.error(red(`\n[hook] Não é permitido fazer push para "${remoteBranch}" a partir de "${currentBranch}".`))
     console.error(`Fluxo correto: git checkout ${remoteBranch} && git merge --no-ff ${currentBranch} && git push\n`)
     failed = true
     return
   }
 
   if (FORCE_PUSH_BLOCKED.includes(remoteBranch) && isForcePush) {
-    console.error(`\n[hook] Force push em "${remoteBranch}" é proibido.`)
+    console.error(red(`\n[hook] Force push em "${remoteBranch}" é proibido.`))
     console.error('Branches de código compartilhado e produção não podem ter histórico reescrito.\n')
     failed = true
     return
@@ -59,7 +61,7 @@ rl.on('line', (line) => {
 
   if (REQUIRE_MERGE_COMMIT.includes(remoteBranch) && !isFirstPush && !isForcePush) {
     if (!isMergeCommit(localSha)) {
-      console.error(`\n[hook] O commit no topo de "${remoteBranch}" não é um merge commit.`)
+      console.error(red(`\n[hook] O commit no topo de "${remoteBranch}" não é um merge commit.`))
       console.error(`Use --no-ff ao integrar: git merge --no-ff <branch-de-tarefa>\n`)
       failed = true
     }
@@ -70,7 +72,7 @@ rl.on('close', () => {
   if (failed) process.exit(1)
 
   if (!PROTECTED.includes(currentBranch) && !TASK_PATTERN.test(currentBranch) && !RELEASE_PATTERN.test(currentBranch)) {
-    console.error(`\n[hook] Nome de branch inválido: "${currentBranch}"`)
+    console.error(red(`\n[hook] Nome de branch inválido: "${currentBranch}"`))
     console.error('Use: feat/NOME, fix/NOME, chore/NOME ou release/NOME\n')
     process.exit(1)
   }

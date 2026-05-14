@@ -9,6 +9,8 @@ const PROTECTED = ['main', 'devel', 'homol']
 const TASK_PATTERN = /^(feat|fix|chore)\/.+/
 const RELEASE_PATTERN = /^release\/.+/
 
+const red = (s) => `\x1b[31m${s}\x1b[0m`
+
 const currentBranch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim()
 
 if (PROTECTED.includes(currentBranch)) process.exit(0)
@@ -17,7 +19,7 @@ if (RELEASE_PATTERN.test(currentBranch)) {
   try {
     const mainTip = execSync('git rev-parse main').toString().trim()
     if (prevSha !== mainTip) {
-      console.error(`\n[hook] A branch "${currentBranch}" deve ser criada obrigatoriamente a partir de "main".`)
+      console.error(red(`\n[hook] A branch "${currentBranch}" deve ser criada obrigatoriamente a partir de "main".`))
       console.error('\nPara corrigir:')
       console.error(`  git checkout main`)
       console.error(`  git pull origin main`)
@@ -34,10 +36,10 @@ for (const branch of ['main', 'homol']) {
     if (tip !== prevSha) continue
 
     if (TASK_PATTERN.test(currentBranch)) {
-      console.error(`\n[hook] A branch "${currentBranch}" foi criada a partir de "${branch}" (restrita).`)
+      console.error(red(`\n[hook] A branch "${currentBranch}" foi criada a partir de "${branch}" (restrita).`))
       console.error('Branches de tarefa devem partir sempre de "devel".')
     } else {
-      console.error(`\n[hook] A branch "${currentBranch}" foi criada a partir de "${branch}" (restrita) e o nome não segue nenhum padrão válido.`)
+      console.error(red(`\n[hook] A branch "${currentBranch}" foi criada a partir de "${branch}" (restrita) e o nome não segue nenhum padrão válido.`))
       console.error('Use: feat/NOME, fix/NOME, chore/NOME ou release/NOME')
     }
     console.error('\nPara corrigir:')

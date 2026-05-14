@@ -19,6 +19,20 @@ remotes:
       - lefthook.yml
 ```
 
+O `lefthook.yml` do projeto consumidor deve também definir `source_dir` apontando para o cache local do remote. O padrão do caminho é `{nome-do-repo}-{ref}`, derivado automaticamente da `git_url` e `ref` configuradas:
+
+```yaml
+source_dir: ".git/info/lefthook-remotes/git-hooks-main/lefthook"
+
+remotes:
+  - git_url: https://git.antech.com.br/mantonelli/git-hooks
+    ref: main
+    configs:
+      - lefthook.yml
+```
+
+> **Por que `source_dir` é necessário:** o lefthook resolve scripts sempre a partir do projeto local. Sem essa configuração, ele procura em `./lefthook/` em vez do cache do remote em `.git/info/lefthook-remotes/`.
+
 Depois, cada desenvolvedor executa uma única vez após clonar o projeto:
 
 ```sh
@@ -30,6 +44,34 @@ Para atualizar os hooks quando este repositório central for alterado:
 ```sh
 lefthook install
 ```
+
+### Verificando a instalação
+
+Após rodar `lefthook install`, confirme que os hooks foram instalados com permissão de execução:
+
+```sh
+ls -la .git/hooks/
+```
+
+Os hooks gerenciados (`pre-commit`, `commit-msg`, `pre-push`, `post-checkout`, `prepare-commit-msg`) devem aparecer com `rwx` para o owner (`-rwxr-xr-x`).
+
+Se algum estiver sem permissão de execução (comum em Linux/macOS quando o arquivo foi criado por outra ferramenta antes do lefthook):
+
+```sh
+chmod +x .git/hooks/pre-commit \
+         .git/hooks/commit-msg \
+         .git/hooks/pre-push \
+         .git/hooks/post-checkout \
+         .git/hooks/prepare-commit-msg
+```
+
+Para confirmar que os hooks estão ativos e apontando para o lefthook:
+
+```sh
+cat .git/hooks/pre-commit
+```
+
+O conteúdo deve referenciar `lefthook run pre-commit`. Se o arquivo estiver vazio ou contiver outro conteúdo, rode `lefthook install` novamente.
 
 ## Hooks
 
