@@ -18,6 +18,11 @@ post-checkout:
     "check-checkout-base.js":
       runner: node
 
+pre-merge-commit:
+  scripts:
+    "check-merge-source.js":
+      runner: node
+
 prepare-commit-msg:
   scripts:
     "prepare-msg.js":

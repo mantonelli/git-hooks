@@ -150,6 +150,16 @@ git push origin homol
 
 ---
 
+### `pre-merge-commit` — Bloqueio de merge de branches proibidas
+
+Executado antes de criar o commit de merge. **Bloqueia** qualquer tentativa de fazer merge de `homol` em outra branch, pois `homol` pode conter código de tarefas ainda não aprovadas pelo cliente.
+
+Se o merge for iniciado, o hook aborta antes de criar o commit e orienta o desenvolvedor a executar `git merge --abort` para limpar o estado do repositório.
+
+> **Limitação:** o `pre-merge-commit` não dispara em merges fast-forward. No fluxo normal (task branch baseada em `devel`, `homol` com múltiplos merges acumulados), fast-forward de `homol` é incomum — mas tecnicamente possível se a task branch foi criada a partir de `homol` (cenário já avisado pelo `post-checkout`).
+
+---
+
 ### `prepare-commit-msg` — Template de mensagem de commit
 
 Executado antes de abrir o editor de commit. Pré-preenche a mensagem com o tipo correto extraído do nome da branch, reduzindo erros de formato.
